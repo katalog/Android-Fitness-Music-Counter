@@ -1,59 +1,61 @@
 package com.mkstudio.FitnessMusicCounter.ui.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mkstudio.FitnessMusicCounter.radio.RadioServiceManager
 import com.mkstudio.FitnessMusicCounter.repo.MainRepository
 import com.mkstudio.FitnessMusicCounter.repo.db.WorkoutRecord
-import com.mkstudio.FitnessMusicCounter.util.CommonUtil
 import com.mkstudio.FitnessMusicCounter.util.Constants
 import com.mkstudio.FitnessMusicCounter.util.myLogD
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val repo:MainRepository, val radio:RadioServiceManager) : ViewModel() {
+    val repo: MainRepository,
+    val radio: RadioServiceManager
+) : ViewModel() {
 
-    // setup
-    private val _records = MutableLiveData<List<WorkoutRecord>>()
-    val records: LiveData<List<WorkoutRecord>> get() = _records
-    private val _repsMax = MutableLiveData<Int>()
-    val repsMax: LiveData<Int> get() = _repsMax
+    val records: StateFlow<List<WorkoutRecord>> = repo.getAllFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // stat
-    private val _stationName = MutableLiveData<String>(Constants.STR_NO_RADIO)
-    val stationName: LiveData<String> get() = _stationName
+    private val _repsMax = MutableStateFlow(10)
+    val repsMax: StateFlow<Int> = _repsMax.asStateFlow()
+
+    val stationName: StateFlow<String> = radio.currentStation
+    val isPlaying: StateFlow<Boolean> = radio.isPlaying
 
     init {
         myLogD("main view model init...")
-    }
-
-    fun getAll() {
-        _records.value = repo.getAll()
-    }
-
-    fun insert(record: WorkoutRecord) {
-        repo.insert(record)
-    }
-
-    fun delete(record: WorkoutRecord) {
-        repo.delete(record)
+        loadRepsMax()
     }
 
     fun loadRepsMax() {
-        _repsMax.value = repo.getReps()
+        val saved = repo.getReps()
+        _repsMax.value = if (saved > 0) saved else 10
     }
 
-    fun keepRepsMax(v:Int) {
+    fun setRepsMax(v: Int) {
         _repsMax.value = v
         repo.keepReps(v)
     }
 
-    fun playRadio(stationName:String) {
-        radio.playRadio(stationName)
-        _stationName.value = stationName
+    fun playRadio(station: String) {
+        radio.playRadio(station)
+    }
+
+    fun toggleRadioPlay() {
+        radio.togglePlay()
+    }
+
+    fun stopRadio() {
+        radio.stopRadio()
     }
 
     fun bindRadio() {
@@ -62,5 +64,11 @@ class MainViewModel @Inject constructor(
 
     fun unbindRadio() {
         radio.unbindRadio()
+    }
+
+    fun deleteRecord(record: WorkoutRecord) {
+        viewModelScope.launch {
+            repo.deleteSuspend(record)
+        }
     }
 }

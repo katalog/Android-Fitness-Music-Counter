@@ -39,7 +39,7 @@ class AdmobManager(val activity: Activity, val repo:MainRepository) {
         InterstitialAd.load(con, strADsId,
             adRequest, object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    myLogE(adError!!.message)
+                    myLogE(adError.message)
                     mInterstitialAd = null
                 }
 
