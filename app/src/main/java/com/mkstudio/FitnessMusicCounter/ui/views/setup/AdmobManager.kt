@@ -57,7 +57,7 @@ class AdmobManager(val activity: Activity, val repo:MainRepository) {
                 myLogD("Ad was dismissed.")
             }
 
-            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 myLogE("Ad failed to show.")
             }
 
