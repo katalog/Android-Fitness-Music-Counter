@@ -465,7 +465,7 @@ fun SetupScreen(
                 .clip(RoundedCornerShape(30.dp)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = ElectricVolt,
-                contentColor = Color.Black
+                contentColor = BgDark
             )
         ) {
             Row(
@@ -476,13 +476,15 @@ fun SetupScreen(
                     text = "START WORKOUT",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
+                    color = BgDark
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = BgDark
                 )
             }
         }

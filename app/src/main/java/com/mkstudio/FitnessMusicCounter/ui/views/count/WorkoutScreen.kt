@@ -288,11 +288,14 @@ fun WorkoutScreen(
                                 }
                                 Button(
                                     onClick = { countViewModel.skipRest() },
-                                    colors = ButtonDefaults.buttonColors(containerColor = ElectricVolt)
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = ElectricVolt,
+                                        contentColor = BgDark
+                                    )
                                 ) {
-                                    Icon(Icons.Default.FastForward, contentDescription = null, tint = Color.Black)
+                                    Icon(Icons.Default.FastForward, contentDescription = null, tint = BgDark)
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Skip Rest", color = Color.Black, fontWeight = FontWeight.Bold)
+                                    Text("Skip Rest", color = BgDark, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -319,17 +322,23 @@ fun WorkoutScreen(
                                     .clip(RoundedCornerShape(30.dp)),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = ElectricVolt,
-                                    contentColor = Color.Black
+                                    contentColor = BgDark
                                 )
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(24.dp))
+                                    Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = BgDark
+                                    )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = "COMPLETE SET ${repsCnt + 1}",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
-                                        letterSpacing = 1.sp
+                                        letterSpacing = 1.sp,
+                                        color = BgDark
                                     )
                                 }
                             }
